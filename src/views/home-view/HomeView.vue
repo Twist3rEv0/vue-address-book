@@ -1,5 +1,5 @@
 <template>
-  <div class="home">
+  <div class="home-view">
     <ContactsList />
   </div>
 </template>
@@ -13,3 +13,7 @@ export default defineComponent({
   components: { ContactsList },
 });
 </script>
+
+<style scoped lang="scss">
+@import "HomeView";
+</style>
