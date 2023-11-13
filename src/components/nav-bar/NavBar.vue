@@ -2,6 +2,7 @@
   <div class="nav-bar">
     <nav>
       <router-link to="/">Home</router-link>
+      <router-link to="/add">Add contact</router-link>
     </nav>
   </div>
 </template>

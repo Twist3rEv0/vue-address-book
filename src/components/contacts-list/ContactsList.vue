@@ -8,7 +8,7 @@
       </tr>
     </thead>
     <tbody>
-      <tr v-for="contact in contactsList" :key="contact.id">
+      <tr v-for="contact in allContacts" :key="contact.id">
         <th scope="row">{{ contact.id }}</th>
         <td>{{ contact.name }}</td>
         <td>{{ contact.surname }}</td>
@@ -19,11 +19,19 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import { mapState } from "vuex";
+import { mapActions, mapState } from "vuex";
 
 export default defineComponent({
   name: "ContactsList",
-  computed: mapState(["contactsList"]),
+  computed: {
+    ...mapState(["allContacts"]),
+  },
+  methods: {
+    ...mapActions(["loadContacts"]),
+  },
+  created() {
+    this.loadContacts();
+  },
 });
 </script>
 
