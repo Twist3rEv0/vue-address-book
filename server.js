@@ -46,12 +46,7 @@ app.listen(port, () => {
 function loadContactsFromFile() {
   try {
     // get JSON file
-    const filePath = path.join(
-      __dirname,
-      "src",
-      "data",
-      "addressBookList.json"
-    );
+    const filePath = path.join(__dirname, "data", "addressBookList.json");
     const data = fs.readFileSync(filePath, "utf8");
 
     // return a contacts list from JSON file
@@ -66,12 +61,7 @@ function loadContactsFromFile() {
 function saveContactsToFile() {
   try {
     // get JSON file
-    const filePath = path.join(
-      __dirname,
-      "src",
-      "data",
-      "addressBookList.json"
-    );
+    const filePath = path.join(__dirname, "data", "addressBookList.json");
 
     // save contacts list updated into a JSON file
     const jsonData = JSON.stringify(contacts, null, 2);

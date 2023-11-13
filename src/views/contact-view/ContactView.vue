@@ -45,15 +45,12 @@
 import { Contact } from "@/models/contact.interface";
 import { Ref, defineComponent, onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
-import { mapActions, mapState } from "vuex";
+import { mapActions } from "vuex";
 
 export default defineComponent({
   name: "ContactView",
-  computed: {
-    ...mapState(["allContacts"]),
-  },
   methods: {
-    ...mapActions(["loadContacts", "addNewContact"]),
+    ...mapActions(["addNewContact"]),
     saveContact() {
       this.addNewContact(this.formData);
 

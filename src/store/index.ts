@@ -1,7 +1,7 @@
 import { createStore } from "vuex";
 import { Contact } from "@/models/contact.interface";
 import { StateContact } from "@/models/state-contact.interface";
-import addressBookList from "../data/addressBookList.json";
+import axios from "axios";
 
 export default createStore({
   state: {
@@ -21,13 +21,27 @@ export default createStore({
     },
   },
   actions: {
-    loadContacts({ commit }) {
-      const allContacts: Contact[] = addressBookList;
-      commit("setContacts", allContacts);
+    async loadContacts({ commit }) {
+      try {
+        const response = await axios.get("http://localhost:3000/api/contacts");
+        const allContacts: Contact[] = response.data;
+        commit("setContacts", allContacts);
+      } catch (error) {
+        console.error("Error loading contacts:", error);
+      }
     },
-    addNewContact({ commit, state }, newContact) {
-      const updatedContacts = [...state.allContacts, newContact];
-      commit("setContacts", updatedContacts);
+    async addNewContact({ commit, state }, newContact) {
+      try {
+        const response = await axios.post(
+          "http://localhost:3000/api/contacts",
+          newContact
+        );
+        const addedContact = response.data;
+        const updatedContacts = [...state.allContacts, addedContact];
+        commit("setContacts", updatedContacts);
+      } catch (error) {
+        console.error("Error adding new contact:", error);
+      }
     },
   },
   modules: {},
