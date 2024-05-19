@@ -2,14 +2,29 @@
   {
     "id": 1,
     "name": "Mario",
-    "surname": "Rossi"
+    "surname": "Rossi",
+    "address": "Via Bianchi n.4",
+    "city": "Catania",
+    "province": "CT",
+    "zipCode": "95100",
+    "country": "Italia",
+    "email": "rossi.mario@test.test",
+    "tel": "+39 01234 012345",
+    "fax": "5678 9101112",
+    "cell": "301 1234567"
   },
   {
-    "name": "test 1",
-    "surname": "test 1 test"
-  },
-  {
-    "name": "nome",
-    "surname": "cognome"
+    "name": "Bianchi",
+    "surname": "Luigi",
+    "address": "Via Rossi 5",
+    "city": "Catania",
+    "province": "Italia",
+    "country": "",
+    "zipCode": "95122",
+    "email": "giarratana.giulio@gmail.com",
+    "tel": "12345",
+    "fax": "",
+    "cell": "",
+    "id": 2
   }
 ]
