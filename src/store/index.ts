@@ -19,25 +19,56 @@ export default createStore({
     /**
      * Method for set contact list
      */
-    setContacts(state: StateContact, contacts: Contact[]) {
+    setContacts(state: StateContact, contacts: Contact[]): void {
       state.allContacts = contacts;
     },
 
     /**
      * Method for add a new contact into contact list
      */
-    addContact(state: StateContact, newContact: Contact) {
+    addContact(state: StateContact, newContact: Contact): void {
       state.allContacts.push(newContact);
+    },
+
+    /**
+     * Method for edit a contact into contact list
+     */
+    editContact(state: StateContact, editedContact: Contact): void {
+      // I cycle through the contact list until I find the contact object to modify to replace it with the one passed in the method ("editedContact")
+      for (let i = 0; i < state?.allContacts?.length; i++) {
+        if (state.allContacts[i]?.id === editedContact?.id) {
+          state.allContacts[i] = JSON.parse(JSON.stringify(editedContact));
+          break;
+        }
+      }
+    },
+
+    /**
+     * Method for delete a contact from contact list
+     */
+    deleteContact(state: StateContact, contactIdToDeleteFromList: number) {
+      // I check if the contact list exists and if so, I print an error to warn the user by not performing any operation
+      if (!state?.allContacts) {
+        console.error(
+          `Error during delete a contact with id ${contactIdToDeleteFromList} from contact list`
+        );
+        return;
+      }
+
+      // delete the contact from the contact list using a "filter" (so that the array is filtered excluding the id passed in the method)
+      state.allContacts = state.allContacts.filter(
+        (contact: Contact) => contact.id !== contactIdToDeleteFromList
+      );
     },
   },
   actions: {
     /**
-     * Get a contact list API
+     * Load a contact list (API)
      */
     async loadContacts({ commit }) {
       try {
         // get all contacts and set into contact list
-        const response = await axios.get("http://localhost:3000/api/contacts");
+        const response = await axios.get("http://localhost:3000/api/contact");
         const allContacts: Contact[] = response.data;
         commit("setContacts", allContacts);
       } catch (error) {
@@ -46,9 +77,9 @@ export default createStore({
     },
 
     /**
-     * Add a new contact API
+     * Add a new contact (API)
      */
-    async addNewContact({ commit, state }, newContact) {
+    async addNewContact({ commit, state }, newContact: Contact) {
       try {
         let lastIdFromContactList: number | null = null;
 
@@ -71,7 +102,7 @@ export default createStore({
 
         // save a new contact
         const response = await axios.post(
-          "http://localhost:3000/api/contacts",
+          "http://localhost:3000/api/contact",
           newContact
         );
         const addedContact = response.data;
@@ -80,6 +111,54 @@ export default createStore({
         commit("addContact", addedContact);
       } catch (error) {
         console.error("Error adding new contact:", error);
+      }
+    },
+
+    /**
+     * Edit a contact (API)
+     */
+    async editContact({ commit }, contactToEdit: Contact) {
+      try {
+        const contactIdToEdit: number | null = contactToEdit?.id || null;
+
+        // if "contactIdToEdit" is null, launch the exception for blocking execution and warn the user
+        if (!contactIdToEdit) {
+          throw "Contact id not exists into contact object to edited";
+        }
+
+        // save edited contact
+        const response = await axios.put(
+          `http://localhost:3000/api/contact/${contactIdToEdit}`,
+          contactToEdit
+        );
+        const editedContact = response.data;
+
+        // edit contact into contact list
+        commit("editContact", editedContact);
+      } catch (error) {
+        console.error("Error edit contact:", error);
+      }
+    },
+
+    /**
+     * Delete a contact (API)
+     */
+    async deleteContact({ commit }, contactIdToDelete: number) {
+      try {
+        // if "contactIdToDelete" is null, launch the exception for blocking execution and warn the user
+        if (!contactIdToDelete) {
+          throw "Contact id to delete not specified";
+        }
+
+        // delete contact
+        await axios.delete(
+          `http://localhost:3000/api/contact/${contactIdToDelete}`
+        );
+
+        // delete contact from contact list
+        commit("deleteContact", contactIdToDelete);
+      } catch (error) {
+        console.error("Error delete contact:", error);
       }
     },
   },

@@ -133,46 +133,52 @@
 
 <script lang="ts">
 import { Contact } from "@/models/contact.interface";
-import { Ref, defineComponent, onMounted, ref } from "vue";
+import store from "@/store";
+import { Ref, defineComponent, onMounted, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { mapActions } from "vuex";
+import { mapActions, mapState } from "vuex";
 
 export default defineComponent({
   name: "ContactView",
+  computed: {
+    ...mapState(["allContacts"]),
+  },
   methods: {
-    ...mapActions(["addNewContact"]),
-    saveContact() {
+    ...mapActions(["addNewContact", "editContact"]),
+    saveContact(): void {
       // if "contactId" is setted and not null
       if (this.contactId) {
         // save the new changes to the contact with specific id
-        // TODO: edit contact
+        this.editContact(this.formData);
       } else {
         // ... otherwise, save a new contact
         this.addNewContact(this.formData);
       }
 
       // reset contact form
-      for (const key of Object.keys(this.formData)) {
-        (this.formData as any)[key] =
-          typeof (this.formData as any)[key] === "string" ? "" : null;
-      }
+      this.resetForm();
 
       // redirect to home
       this.$router?.push({ name: "home" });
     },
-    cancel() {
+    cancel(): void {
       // reset contact form
+      this.resetForm();
+
+      // redirect to home
+      this.$router?.push({ name: "home" });
+    },
+    resetForm(): void {
+      // reset all fields into contact form
       for (const key of Object.keys(this.formData)) {
         (this.formData as any)[key] =
           typeof (this.formData as any)[key] === "string" ? "" : null;
       }
-
-      // redirect to home
-      this.$router?.push({ name: "home" });
     },
   },
   setup() {
     const route = useRoute();
+
     const formData: Ref<Contact> = ref({
       name: "",
       surname: "",
@@ -193,6 +199,28 @@ export default defineComponent({
 
       // get a contact id from route param
       contactId.value = route.params?.id ? Number(route.params?.id) : null;
+
+      // if "contactId" is not null, is searched into "allContacts" the matching contact and the data is updated into formData
+      if (contactId.value) {
+        const contact = store.state.allContacts.find(
+          (contact: Contact) => contact.id === contactId.value
+        );
+        if (contact) {
+          formData.value = { ...contact };
+        }
+      }
+    });
+
+    watch(contactId, (newId) => {
+      // if "contactId" is not null, is searched into "allContacts" the matching contact and the data is updated into formData
+      if (newId) {
+        const contact = store.state.allContacts.find(
+          (contact: Contact) => contact.id === newId
+        );
+        if (contact) {
+          formData.value = { ...contact };
+        }
+      }
     });
 
     return { formData, contactId };

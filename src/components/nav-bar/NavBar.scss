@@ -1,6 +1,10 @@
 .nav-bar {
   nav {
     text-align: center;
-    padding: 30px;
+    padding: 2rem;
+
+    a:not(a:last-child) {
+      padding-right: 1rem;
+    }
   }
 }
